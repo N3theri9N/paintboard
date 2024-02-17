@@ -11,7 +11,7 @@ const PaintBoard = () => {
     upX = 0,
     upY = 0;
   const [selectedShape, setSelectedShape] = useState<Shapes>("square");
-  const { shapes, addShapes, clearShapes } = useShapes();
+  const { shapes, initShapes, addShapes, clearShapes } = useShapes();
 
   return (
     <div>
@@ -51,6 +51,7 @@ const PaintBoard = () => {
         </div>
       </div>
       <main
+        ref={initShapes}
         id="canvas"
         className="w-full h-screen overflow-hidden"
         onMouseDown={(e) => {
