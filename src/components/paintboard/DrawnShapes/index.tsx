@@ -1,4 +1,6 @@
-import { ShapeType } from "@/types/shape";
+import { Shapes, ShapeType } from "@/types/shape";
+import clsx from "clsx";
+import { forwardRef } from "react";
 import styled from "styled-components";
 
 const ShapeComponent = styled.div<{
@@ -28,7 +30,7 @@ const DrawnShapes = ({ shapes }: { shapes: ShapeType[] }) => {
         const { top, left, width, height, shape } = item;
         return (
           <ShapeComponent
-            tabIndex={0}
+            // tabIndex={0}
             key={idx}
             $top={top}
             $left={left}
@@ -41,5 +43,18 @@ const DrawnShapes = ({ shapes }: { shapes: ShapeType[] }) => {
     </>
   );
 };
+
+export const DrawingShape = forwardRef<HTMLDivElement, { shape: Shapes }>(
+  ({ shape }, previewRef) => {
+    return (
+      <div
+        ref={previewRef}
+        className={clsx("w-0 h-0 bg-opacity-0 border-2 border-black pointer-events-none", {
+          "rounded-[100%]": shape === "circle",
+        })}
+      />
+    );
+  }
+);
 
 export default DrawnShapes;

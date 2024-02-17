@@ -1,9 +1,9 @@
 "use client";
-import { Shapes, ShapeType } from "@/types/shape";
-import { useState } from "react";
+import { Shapes } from "@/types/shape";
+import { useRef, useState } from "react";
 import ToolButton from "../UI/ToolButton";
 import useShapes from "@/hooks/useShapes";
-import DrawnShapes from "./DrawnShapes";
+import DrawnShapes, { DrawingShape } from "./DrawnShapes";
 
 const PaintBoard = () => {
   let downX = 0,
@@ -12,6 +12,8 @@ const PaintBoard = () => {
     upY = 0;
   const [selectedShape, setSelectedShape] = useState<Shapes>("square");
   const { shapes, initShapes, addShapes, clearShapes } = useShapes();
+
+  const previewRef = useRef<HTMLDivElement>(null);
 
   return (
     <div>
@@ -50,13 +52,33 @@ const PaintBoard = () => {
           </ToolButton>
         </div>
       </div>
-      <main
+      <div
         ref={initShapes}
         id="canvas"
         className="w-full h-screen overflow-hidden"
         onMouseDown={(e) => {
+          e.stopPropagation();
           downX = e.clientX;
           downY = e.clientY;
+        }}
+        onMouseMove={(e) => {
+          e.preventDefault();
+          if (e.buttons === 1) {
+            // 왼쪽 마우스버튼을 클릭 했을 경우
+            const currentX = e.clientX;
+            const currentY = e.clientY;
+            const left = Math.min(currentX, downX);
+            const top = Math.min(currentY, downY);
+            const width = Math.abs(currentX - downX);
+            const height = Math.abs(currentY - downY);
+
+            previewRef.current?.style.setProperty("position", "absolute");
+            previewRef.current?.style.setProperty("left", `${left}px`);
+            previewRef.current?.style.setProperty("top", `${top}px`);
+            previewRef.current?.style.setProperty("width", `${width}px`);
+            previewRef.current?.style.setProperty("height", `${height}px`);
+            previewRef.current?.style.setProperty("display", "block");
+          }
         }}
         onMouseUp={(e) => {
           upX = e.clientX;
@@ -65,14 +87,16 @@ const PaintBoard = () => {
           const top = Math.min(upY, downY);
           const width = Math.abs(upX - downX);
           const height = Math.abs(upY - downY);
+          previewRef.current?.style.setProperty("display", "none");
 
           if (width > 20 && height > 20) {
             addShapes({ left, top, width, height, shape: selectedShape });
           }
         }}
       >
+        <DrawingShape shape={selectedShape} ref={previewRef} />
         <DrawnShapes shapes={shapes} />
-      </main>
+      </div>
     </div>
   );
 };
