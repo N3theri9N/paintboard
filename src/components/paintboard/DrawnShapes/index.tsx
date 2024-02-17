@@ -49,7 +49,7 @@ export const DrawingShape = forwardRef<HTMLDivElement, { shape: Shapes }>(
     return (
       <div
         ref={previewRef}
-        className={clsx("w-0 h-0 bg-opacity-0 border-2 border-black pointer-events-none", {
+        className={clsx("w-0 h-0 bg-opacity-0 border-2 hidden border-black pointer-events-none", {
           "rounded-[100%]": shape === "circle",
         })}
       />
