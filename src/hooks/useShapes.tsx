@@ -1,5 +1,9 @@
 import { ShapeType } from "@/types/shape";
-import { getLocalStorageShapeData, setLocalStorageShapeData } from "@/util/LocalStorageDTO";
+import {
+  deleteLocalStorageShapeData,
+  getLocalStorageShapeData,
+  setLocalStorageShapeData,
+} from "@/util/LocalStorageDTO";
 import { useCallback, useState } from "react";
 
 const useShapes = () => {
@@ -25,7 +29,7 @@ const useShapes = () => {
 
   const clearShapes = () => {
     setShapes([]);
-    setLocalStorageShapeData([]);
+    deleteLocalStorageShapeData();
   };
 
   return { shapes, initShapes, addShapes, clearShapes };
