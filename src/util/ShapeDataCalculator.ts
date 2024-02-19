@@ -1,4 +1,4 @@
-export class ShapeDataCalculator {
+export class DrawingShapeDataCalculator {
   private downX;
   private downY;
   constructor() {
@@ -17,5 +17,25 @@ export class ShapeDataCalculator {
     const width = Math.abs(x - this.downX);
     const height = Math.abs(y - this.downY);
     return { left, top, width, height };
+  }
+}
+
+export class MovingShapeDataCalculator {
+  private offsetX;
+  private offsetY;
+  constructor() {
+    this.offsetX = 0;
+    this.offsetY = 0;
+  }
+
+  public setOffset(x: number, y: number) {
+    this.offsetX = x;
+    this.offsetY = y;
+  }
+
+  public calcShapeData(x: number, y: number) {
+    const left = x - this.offsetX;
+    const top = y - this.offsetY;
+    return { left, top };
   }
 }

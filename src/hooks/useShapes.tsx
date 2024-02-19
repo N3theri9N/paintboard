@@ -7,19 +7,20 @@ import {
 import { useCallback, useState } from "react";
 
 const useShapes = () => {
-  const [shapes, setShapes] = useState<ShapeType[]>([]);
+  const [drawnShapes, setDrawnShapes] = useState<ShapeType[]>([]);
+  const [index, setIndex] = useState<number>(-1);
 
   const initShapes = useCallback((node: HTMLDivElement) => {
     if (node == null) {
       return;
     }
 
-    setShapes(getLocalStorageShapeData());
+    setDrawnShapes(getLocalStorageShapeData());
   }, []);
 
   const addShapes = (shapeData: ShapeType) => {
     const { left, top, width, height, shape } = shapeData;
-    setShapes((prev) => {
+    setDrawnShapes((prev) => {
       const newState = [...prev];
       newState.push({ left, top, width, height, shape });
       setLocalStorageShapeData(newState);
@@ -27,12 +28,21 @@ const useShapes = () => {
     });
   };
 
+  const moveShape = (index: number, shapeData: ShapeType) => {
+    setDrawnShapes((prev) => {
+      const newState = [...prev];
+      newState[index] = shapeData;
+      setLocalStorageShapeData(newState);
+      return newState;
+    });
+  };
+
   const clearShapes = () => {
-    setShapes([]);
+    setDrawnShapes([]);
     deleteLocalStorageShapeData();
   };
 
-  return { shapes, initShapes, addShapes, clearShapes };
+  return { drawnShapes, initShapes, addShapes, moveShape, clearShapes, index, setIndex };
 };
 
 export default useShapes;

@@ -1,6 +1,7 @@
+import { Modes } from "@/types/mode";
 import { Shapes, ShapeType } from "@/types/shape";
 import clsx from "clsx";
-import { forwardRef } from "react";
+import { Dispatch, forwardRef, SetStateAction } from "react";
 import styled from "styled-components";
 
 const ShapeComponent = styled.div<{
@@ -8,9 +9,11 @@ const ShapeComponent = styled.div<{
   $left: number;
   $width: number;
   $height: number;
-  $shape: "circle" | "square";
+  $mode: Modes;
+  $shape: Shapes;
 }>`
   border: solid black 2px;
+  pointer-events: ${(props) => (props.$mode === "modify" ? "auto" : "none")};
   border-radius: ${(props) => (props.$shape === "circle" ? "9999%" : "0%")};
   position: absolute;
   height: ${(props) => props.$height}px;
@@ -18,20 +21,29 @@ const ShapeComponent = styled.div<{
   top: ${(props) => props.$top}px;
   left: ${(props) => props.$left}px;
   &:focus {
-    outline: none;
-    box-shadow: 0px 0px 5px blue;
+    display: none;
   }
 `;
 
-const DrawnShapes = ({ shapes }: { shapes: ShapeType[] }) => {
+const DrawnShapes = ({
+  shapes,
+  mode,
+  setIndex,
+}: {
+  shapes: ShapeType[];
+  mode: Modes;
+  setIndex: Dispatch<SetStateAction<number>>;
+}) => {
   return (
     <>
       {shapes.map((item, idx) => {
         const { top, left, width, height, shape } = item;
         return (
           <ShapeComponent
-            // tabIndex={0}
+            tabIndex={mode === "modify" ? 0 : undefined}
+            onClick={() => setIndex(idx)}
             key={idx}
+            $mode={mode}
             $top={top}
             $left={left}
             $width={width}

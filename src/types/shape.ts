@@ -1,9 +1,12 @@
 export type Shapes = "square" | "circle";
 
-export type ShapeType = {
-  top: number;
+export type ShapeAttributes = {
   width: number;
   left: number;
+  top: number;
   height: number;
-  shape: Shapes;
 };
+
+export type ShapeType = {
+  shape: Shapes;
+} & ShapeAttributes;
