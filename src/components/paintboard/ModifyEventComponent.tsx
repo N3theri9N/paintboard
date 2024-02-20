@@ -54,15 +54,18 @@ const ModifyEventComponent = ({
       <ShapeComponent
         onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => {
           e.preventDefault();
+          e.stopPropagation();
           ShapeDataCalculator.setOffset(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
         }}
         onMouseMove={(e: React.MouseEvent<HTMLDivElement>) => {
+          e.stopPropagation();
           if (e.buttons === 1) {
             const { left, top } = ShapeDataCalculator.calcShapeData(e.clientX, e.clientY);
             setMovingShape({ left, top, width, height });
           }
         }}
         onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+          e.stopPropagation();
           const { left, top } = ShapeDataCalculator.calcShapeData(e.clientX, e.clientY);
           const newState = { ...selectedShape, left, top };
           moveShape(index, newState);

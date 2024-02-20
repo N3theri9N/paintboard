@@ -1,62 +1,76 @@
 import ToolButton from "@/components/UI/ToolButton";
-import { Modes } from "@/types/mode";
+import { Modes, ModifyMethods } from "@/types/mode";
 import { Shapes } from "@/types/shape";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { ReactNode } from "react";
 
-const ToolBar = ({
+export const Draw = ({
   mode,
-  setMode,
-  clearShapes,
   shape,
-  setShape,
+  ToolClickHandler,
 }: {
   mode: Modes;
-  setMode: Dispatch<SetStateAction<Modes>>;
   shape: Shapes;
-  setShape: Dispatch<SetStateAction<Shapes>>;
-  clearShapes: () => void;
-}): JSX.Element => {
+  ToolClickHandler: (mode: Modes, shape?: Shapes) => () => void;
+}) => {
   return (
-    <div className="w-full flex bg-black">
-      <div className="flex items-center bg-white">
-        <ToolButton
-          active={mode === "draw" && shape === "square"}
-          onClick={() => {
-            setMode("draw");
-            setShape("square");
-          }}
-        >
-          <div className="border-2 mx-2 h-full border-black" />
-        </ToolButton>
-        <ToolButton
-          active={mode === "draw" && shape === "circle"}
-          onClick={() => {
-            setMode("draw");
-            setShape("circle");
-          }}
-        >
-          <div className="border-2 mx-2 h-full rounded-full border-black" />
-        </ToolButton>
-        <ToolButton
-          active={mode === "modify"}
-          onClick={() => {
-            setMode("modify");
-          }}
-        >
-          선택
-        </ToolButton>
-
-        <ToolButton
-          active={false}
-          onClick={() => {
-            clearShapes();
-          }}
-        >
-          삭제
-        </ToolButton>
-      </div>
-    </div>
+    <WhiteBackground>
+      <ToolButton
+        active={mode === "draw" && shape === "square"}
+        onClick={ToolClickHandler("draw", "square")}
+      >
+        <div className="border-2 mx-2 h-full border-black" />
+      </ToolButton>
+      <ToolButton
+        active={mode === "draw" && shape === "circle"}
+        onClick={ToolClickHandler("draw", "circle")}
+      >
+        <div className="border-2 mx-2 h-full rounded-full border-black" />
+      </ToolButton>
+    </WhiteBackground>
   );
 };
 
-export default ToolBar;
+export const Clear = ({ clearShapes }: { clearShapes: () => void }) => {
+  return (
+    <WhiteBackground>
+      <ToolButton onClick={clearShapes}>초기화</ToolButton>
+    </WhiteBackground>
+  );
+};
+
+export const Modify = ({
+  mode,
+  index,
+  ToolClickHandler,
+  modifyShape,
+}: {
+  mode: Modes;
+  index: number;
+  ToolClickHandler: (mode: Modes) => () => void;
+  modifyShape: ModifyMethods;
+}) => {
+  return (
+    <>
+      <WhiteBackground>
+        <ToolButton active={mode === "modify"} onClick={ToolClickHandler("modify")}>
+          수정
+        </ToolButton>
+      </WhiteBackground>
+      <div
+        className={`${
+          index < 0 ? "pointer-events-none cursor-auto bg-gray-500 text-gray-400" : " bg-white"
+        } flex bg-white`}
+      >
+        <ToolButton onClick={modifyShape.top}>맨앞으로</ToolButton>
+        <ToolButton onClick={modifyShape.forward}>앞으로</ToolButton>
+        <ToolButton onClick={modifyShape.backward}>뒤로</ToolButton>
+        <ToolButton onClick={modifyShape.bottom}>맨뒤로</ToolButton>
+        <ToolButton onClick={modifyShape.delete}>지우기</ToolButton>
+      </div>
+    </>
+  );
+};
+
+const WhiteBackground = ({ children }: { children: ReactNode }) => {
+  return <div className="flex items-center bg-white">{children}</div>;
+};

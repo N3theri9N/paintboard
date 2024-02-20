@@ -41,7 +41,10 @@ const DrawnShapes = ({
         return (
           <ShapeComponent
             tabIndex={mode === "modify" ? 0 : undefined}
-            onClick={() => setIndex(idx)}
+            onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+              e.stopPropagation();
+              setIndex(idx);
+            }}
             key={idx}
             $mode={mode}
             $top={top}

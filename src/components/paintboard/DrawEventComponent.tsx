@@ -1,9 +1,15 @@
-import { ShapeAttributes } from "@/types/shape";
+import { ShapeAttributes, Shapes, ShapeType } from "@/types/shape";
 import { DrawingShapeDataCalculator } from "@/util/ShapeDataCalculator";
 import { useRef } from "react";
 import { DrawingShape } from "./DrawnShapes";
 
-const DrawEventComponent = ({ shape, addShapes }: any) => {
+const DrawEventComponent = ({
+  shape,
+  addShapes,
+}: {
+  shape: Shapes;
+  addShapes: (shapeData: ShapeType) => void;
+}) => {
   const previewRef = useRef<HTMLDivElement>(null);
   const shapeDataCalculator = new DrawingShapeDataCalculator();
 
