@@ -1,4 +1,4 @@
-import { Modes } from "@/types/mode";
+import { Modes, ModifyMethods } from "@/types/mode";
 import { ShapeType } from "@/types/shape";
 import {
   deleteLocalStorageShapeData,
@@ -47,7 +47,7 @@ const useShapes = (mode: Modes) => {
     deleteLocalStorageShapeData();
   };
 
-  const modifyShape = {
+  const modifyShape: ModifyMethods = {
     invoke: () => {
       const targetShape = drawnShapes[index];
       const remainShapes = [...drawnShapes];
@@ -95,6 +95,15 @@ const useShapes = (mode: Modes) => {
       remainShapes.splice(index, 1);
       resetIndex();
       setDrawnShapes(remainShapes);
+    },
+    color: (color: string) => {
+      const targetShape: ShapeType = drawnShapes[index];
+      setDrawnShapes((prev) => {
+        const newState = [...prev];
+        targetShape.color = color;
+        newState[index] = targetShape;
+        return newState;
+      });
     },
   };
 

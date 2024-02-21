@@ -12,4 +12,5 @@ export type ModifyMethods = {
   backward: () => void;
   bottom: () => void;
   delete: () => void;
+  color: (color: string) => void;
 };

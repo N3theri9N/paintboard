@@ -1,7 +1,7 @@
 import ToolButton from "@/components/UI/ToolButton";
 import { Modes, ModifyMethods } from "@/types/mode";
 import { Shapes } from "@/types/shape";
-import React, { ReactNode } from "react";
+import React, { ChangeEvent, ReactNode } from "react";
 
 export const Draw = ({
   mode,
@@ -66,6 +66,12 @@ export const Modify = ({
         <ToolButton onClick={modifyShape.backward}>뒤로</ToolButton>
         <ToolButton onClick={modifyShape.bottom}>맨뒤로</ToolButton>
         <ToolButton onClick={modifyShape.delete}>지우기</ToolButton>
+        <input
+          type="color"
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            modifyShape.color(e.target.value);
+          }}
+        />
       </div>
     </>
   );
