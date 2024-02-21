@@ -3,29 +3,54 @@ import { Shapes } from "@/types/shape";
 import { useState } from "react";
 import useShapes from "@/hooks/useShapes";
 import DrawnShapes from "./DrawnShapes";
-import ToolBar from "./ToolBar";
+import * as ToolBar from "./ToolBar";
 import { Modes } from "@/types/mode";
 import DrawEventComponent from "./DrawEventComponent";
 import ModifyEventComponent from "./ModifyEventComponent";
+import Canvas from "./canvas";
 
 const PaintBoard = (): JSX.Element => {
   const [shape, setShape] = useState<Shapes>("square");
   const [mode, setMode] = useState<Modes>("draw");
-  const { drawnShapes, initShapes, addShapes, clearShapes, index, setIndex, moveShape } =
-    useShapes();
+  const {
+    drawnShapes,
+    initShapes,
+    addShapes,
+    clearShapes,
+    index,
+    setIndex,
+    moveShape,
+    modifyShape,
+  } = useShapes(mode);
+  console.count("RERENDER");
+  console.log(drawnShapes);
+
+  const ToolClickHandler = (mode: Modes, shape?: Shapes) => () => {
+    setMode(mode);
+    if (shape !== undefined) {
+      setShape(shape);
+    }
+  };
+
+  const resetIndex = () => {
+    setIndex(-1);
+  };
 
   return (
     <div>
-      <ToolBar
-        mode={mode}
-        setMode={setMode}
-        clearShapes={clearShapes}
-        shape={shape}
-        setShape={setShape}
-      />
-      <div ref={initShapes} id="canvas" className="w-full h-screen overflow-hidden">
-        {mode === "draw" && <DrawEventComponent shape={shape} addShapes={addShapes} />}
+      <div className="w-full flex bg-black z-10">
+        <ToolBar.Draw mode={mode} ToolClickHandler={ToolClickHandler} shape={shape} />
+        <ToolBar.Clear clearShapes={clearShapes} />
+        <ToolBar.Modify
+          mode={mode}
+          ToolClickHandler={ToolClickHandler}
+          index={index}
+          modifyShape={modifyShape}
+        />
+      </div>
+      <Canvas initShapes={initShapes} onClickHandler={resetIndex}>
         <DrawnShapes shapes={drawnShapes} mode={mode} setIndex={setIndex} />
+        {mode === "draw" && <DrawEventComponent shape={shape} addShapes={addShapes} />}
         {mode === "modify" && (
           <ModifyEventComponent
             selectedShape={drawnShapes[index]}
@@ -33,7 +58,7 @@ const PaintBoard = (): JSX.Element => {
             moveShape={moveShape}
           />
         )}
-      </div>
+      </Canvas>
     </div>
   );
 };
