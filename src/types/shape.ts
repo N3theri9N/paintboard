@@ -9,4 +9,5 @@ export type ShapeAttributes = {
 
 export type ShapeType = {
   shape: Shapes;
+  color?: string;
 } & ShapeAttributes;

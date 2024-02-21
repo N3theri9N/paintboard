@@ -9,12 +9,15 @@ const ShapeComponent = styled.div<{
   $left: number;
   $width: number;
   $height: number;
+  $color?: string;
   $mode: Modes;
   $shape: Shapes;
 }>`
   border: solid black 2px;
   pointer-events: ${(props) => (props.$mode === "modify" ? "auto" : "none")};
   border-radius: ${(props) => (props.$shape === "circle" ? "9999%" : "0%")};
+  background-color: ${(props) => props.$color ?? ""};
+  // opacity: ${(props) => (props.$color ? "80%" : "0%")};
   position: absolute;
   height: ${(props) => props.$height}px;
   width: ${(props) => props.$width}px;
@@ -37,7 +40,7 @@ const DrawnShapes = ({
   return (
     <>
       {shapes.map((item, idx) => {
-        const { top, left, width, height, shape } = item;
+        const { top, left, width, height, color, shape } = item;
         return (
           <ShapeComponent
             tabIndex={mode === "modify" ? 0 : undefined}
@@ -51,6 +54,7 @@ const DrawnShapes = ({
             $left={left}
             $width={width}
             $height={height}
+            $color={color}
             $shape={shape}
           />
         );

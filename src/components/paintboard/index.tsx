@@ -22,8 +22,8 @@ const PaintBoard = (): JSX.Element => {
     moveShape,
     modifyShape,
   } = useShapes(mode);
-  console.count("RERENDER");
-  console.log(drawnShapes);
+
+  console.count("RERENDERING COUNT");
 
   const ToolClickHandler = (mode: Modes, shape?: Shapes) => () => {
     setMode(mode);
