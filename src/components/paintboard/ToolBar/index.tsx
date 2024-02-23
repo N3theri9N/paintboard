@@ -1,7 +1,8 @@
 import ToolButton from "@/components/UI/ToolButton";
 import { Modes, ModifyMethods } from "@/types/mode";
 import { Shapes } from "@/types/shape";
-import React, { ChangeEvent, ReactNode } from "react";
+import html2canvas from "html2canvas";
+import React, { ChangeEvent, ReactNode, useRef } from "react";
 
 export const Draw = ({
   mode,
@@ -49,6 +50,7 @@ export const Modify = ({
   ToolClickHandler: (mode: Modes) => () => void;
   modifyShape: ModifyMethods;
 }) => {
+  const colorRef = useRef<HTMLInputElement>(null);
   return (
     <>
       <WhiteBackground>
@@ -68,12 +70,41 @@ export const Modify = ({
         <ToolButton onClick={modifyShape.delete}>지우기</ToolButton>
         <input
           type="color"
+          className="h-10 w-10"
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            modifyShape.color(e.target.value);
+            // 컬러 파레트 드래그 중에도 리랜더링이 발생하여 비제어 컴포넌트로 전환
+            // modifyShape.color(e.target.value);
           }}
+          ref={colorRef}
         />
+        <ToolButton
+          onClick={() => {
+            if (colorRef.current !== null) {
+              modifyShape.color(colorRef.current.value);
+            }
+          }}
+        >
+          색 적용
+        </ToolButton>
       </div>
     </>
+  );
+};
+
+export const Download = () => {
+  const downloadButtonHandler = () => {
+    let canvasDivElement = document.getElementById("canvas") as HTMLDivElement;
+    html2canvas(canvasDivElement).then((canvas: HTMLCanvasElement) => {
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/jpg");
+      link.download = `image_${Math.ceil(Math.random() * 1000000)}.jpg`;
+      link.click();
+    });
+  };
+  return (
+    <WhiteBackground>
+      <ToolButton onClick={downloadButtonHandler}>다운로드</ToolButton>
+    </WhiteBackground>
   );
 };
 

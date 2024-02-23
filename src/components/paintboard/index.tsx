@@ -39,14 +39,17 @@ const PaintBoard = (): JSX.Element => {
   return (
     <div>
       <div className="w-full flex bg-black z-10">
-        <ToolBar.Draw mode={mode} ToolClickHandler={ToolClickHandler} shape={shape} />
-        <ToolBar.Clear clearShapes={clearShapes} />
-        <ToolBar.Modify
-          mode={mode}
-          ToolClickHandler={ToolClickHandler}
-          index={index}
-          modifyShape={modifyShape}
-        />
+        <div className="flex">
+          <ToolBar.Draw mode={mode} ToolClickHandler={ToolClickHandler} shape={shape} />
+          <ToolBar.Clear clearShapes={clearShapes} />
+          <ToolBar.Modify
+            mode={mode}
+            ToolClickHandler={ToolClickHandler}
+            index={index}
+            modifyShape={modifyShape}
+          />
+        </div>
+        <ToolBar.Download />
       </div>
       <Canvas initShapes={initShapes} onClickHandler={resetIndex}>
         <DrawnShapes shapes={drawnShapes} mode={mode} setIndex={setIndex} />
