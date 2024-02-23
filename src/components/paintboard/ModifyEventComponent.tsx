@@ -29,10 +29,13 @@ const ModifyEventComponent = ({
   index: number;
   moveShape: (index: number, shapeData: ShapeType) => void;
 }) => {
-  useEffect(() => {
-    if (selectedShape === undefined) return;
-    setMovingShape(selectedShape);
-  }, [selectedShape]);
+  useEffect(
+    function changeMovingShape() {
+      if (selectedShape === undefined) return;
+      setMovingShape(selectedShape);
+    },
+    [selectedShape]
+  );
 
   const movingShapeRef = useRef<HTMLDivElement>(null);
 

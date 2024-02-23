@@ -25,13 +25,19 @@ const useShapes = (mode: Modes) => {
   };
 
   // 그리기 모드일때 index 초기화
-  useEffect(() => {
-    if (mode === "draw") resetIndex();
-  }, [mode]);
+  useEffect(
+    function resetIndexByMode() {
+      if (mode === "draw") resetIndex();
+    },
+    [mode]
+  );
 
-  useEffect(() => {
-    setLocalStorageShapeData(drawnShapes);
-  }, [drawnShapes]);
+  useEffect(
+    function synchronizeLocalStorage() {
+      setLocalStorageShapeData(drawnShapes);
+    },
+    [drawnShapes]
+  );
 
   const addShapes = (shapeData: ShapeType) => {
     const { left, top, width, height, shape } = shapeData;
@@ -42,7 +48,7 @@ const useShapes = (mode: Modes) => {
     });
   };
 
-  const clearShapes = () => {
+  const clearShapes = (): void => {
     setDrawnShapes([]);
     deleteLocalStorageShapeData();
   };

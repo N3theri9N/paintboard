@@ -19,13 +19,13 @@ export const Draw = ({
         active={mode === "draw" && shape === "square"}
         onClick={ToolClickHandler("draw", "square")}
       >
-        <div className="border-2 mx-2 h-full border-black" />
+        <div data-testid="draw-square" className="border-2 mx-2 h-full border-black" />
       </ToolButton>
       <ToolButton
         active={mode === "draw" && shape === "circle"}
         onClick={ToolClickHandler("draw", "circle")}
       >
-        <div className="border-2 mx-2 h-full rounded-full border-black" />
+        <div data-testid="draw-circle" className="border-2 mx-2 h-full rounded-full border-black" />
       </ToolButton>
     </WhiteBackground>
   );
