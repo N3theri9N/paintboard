@@ -35,6 +35,7 @@ export const Draw = memo(
     );
   }
 );
+Draw.displayName = "Draw";
 
 export const Clear = memo(({ clearShapes }: { clearShapes: () => void }) => {
   return (
@@ -43,6 +44,7 @@ export const Clear = memo(({ clearShapes }: { clearShapes: () => void }) => {
     </WhiteBackground>
   );
 });
+Clear.displayName = "Clear";
 
 export const Modify = ({
   mode,
@@ -112,6 +114,7 @@ export const Download = memo(() => {
     </WhiteBackground>
   );
 });
+Download.displayName = "Download";
 
 const WhiteBackground = ({ children }: { children: ReactNode }) => {
   return <div className="flex items-center bg-white">{children}</div>;

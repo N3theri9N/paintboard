@@ -18,18 +18,18 @@ const useShapes = (mode: Modes) => {
     setDrawnShapes(getLocalStorageShapeData());
   }, []);
 
-  const resetIndex = () => {
+  const resetIndex = useCallback(() => {
     if (index !== -1) {
       setIndex(-1);
     }
-  };
+  }, [index]);
 
   // 그리기 모드일때 index 초기화
   useEffect(
     function resetIndexByMode() {
       if (mode === "draw") resetIndex();
     },
-    [mode]
+    [mode, resetIndex]
   );
 
   useEffect(

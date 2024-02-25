@@ -32,7 +32,7 @@ const PaintBoard = ({ initShape = "square" }: { initShape?: Shapes }): JSX.Eleme
         setShape(shape);
       }
     },
-    [mode, shape]
+    []
   );
 
   const resetIndex = () => {

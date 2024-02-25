@@ -547,6 +547,8 @@ export const Download = memo(() => {
 커스텀 훅의 기능 테스트는 vitest로 대응하였으며
 전반적인 그림판 기능이 올바르게 작동하는지, 크로스브라우징도 커버할 수 있는 E2E 테스트는 playwright 로 대응하였습니다.
 
+위 테스트코드는 github Action 과 연동하여 pull Request 를 생성하면 테스트를 진행합니다.
+
 적용한 테스트는 아래와 같습니다.
 vitest :
 
