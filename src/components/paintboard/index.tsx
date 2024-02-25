@@ -9,8 +9,8 @@ import DrawEventComponent from "./DrawEventComponent";
 import ModifyEventComponent from "./ModifyEventComponent";
 import Canvas from "./canvas";
 
-const PaintBoard = (): JSX.Element => {
-  const [shape, setShape] = useState<Shapes>("square");
+const PaintBoard = ({ initShape = "square" }: { initShape?: Shapes }): JSX.Element => {
+  const [shape, setShape] = useState<Shapes>(initShape);
   const [mode, setMode] = useState<Modes>("draw");
   const {
     drawnShapes,
@@ -38,7 +38,7 @@ const PaintBoard = (): JSX.Element => {
 
   return (
     <div>
-      <div className="w-full flex bg-black z-10">
+      <div className="w-full flex bg-black z-10 justify-between" id="Toolbar">
         <div className="flex">
           <ToolBar.Draw mode={mode} ToolClickHandler={ToolClickHandler} shape={shape} />
           <ToolBar.Clear clearShapes={clearShapes} />

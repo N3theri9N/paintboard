@@ -23,9 +23,6 @@ const ShapeComponent = styled.div<{
   width: ${(props) => props.$width}px;
   top: ${(props) => props.$top}px;
   left: ${(props) => props.$left}px;
-  &:focus {
-    display: none;
-  }
 `;
 
 const DrawnShapes = ({
@@ -43,6 +40,7 @@ const DrawnShapes = ({
         const { top, left, width, height, color, shape } = item;
         return (
           <ShapeComponent
+            className={`shape ${shape}`}
             tabIndex={mode === "modify" ? 0 : undefined}
             onClick={(e: React.MouseEvent<HTMLDivElement>) => {
               e.stopPropagation();
@@ -68,6 +66,7 @@ export const DrawingShape = forwardRef<HTMLDivElement, { shape: Shapes }>(
     return (
       <div
         ref={previewRef}
+        data-testid="previewShape"
         className={clsx("w-0 h-0 bg-opacity-0 border-2 hidden border-black pointer-events-none", {
           "rounded-[100%]": shape === "circle",
         })}
@@ -75,5 +74,6 @@ export const DrawingShape = forwardRef<HTMLDivElement, { shape: Shapes }>(
     );
   }
 );
+DrawingShape.displayName = "DrawingShape";
 
 export default DrawnShapes;
