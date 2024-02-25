@@ -23,9 +23,6 @@ const ShapeComponent = styled.div<{
   width: ${(props) => props.$width}px;
   top: ${(props) => props.$top}px;
   left: ${(props) => props.$left}px;
-  &:focus {
-    display: none;
-  }
 `;
 
 const DrawnShapes = ({
