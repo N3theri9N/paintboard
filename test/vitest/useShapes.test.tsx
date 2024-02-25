@@ -1,7 +1,7 @@
 import { ShapeType } from "@/types/shape";
 import { getLocalStorageShapeData } from "@/util/LocalStorageDTO";
 import { act, renderHook } from "@testing-library/react";
-import useShapes from "../hooks/useShapes";
+import useShapes from "@/hooks/useShapes";
 
 const shape1: ShapeType = {
   shape: "square",

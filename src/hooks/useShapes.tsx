@@ -1,7 +1,7 @@
 import { Modes, ModifyMethods } from "@/types/mode";
 import { ShapeType } from "@/types/shape";
 import {
-  deleteLocalStorageShapeData,
+  // deleteLocalStorageShapeData,
   getLocalStorageShapeData,
   setLocalStorageShapeData,
 } from "@/util/LocalStorageDTO";
@@ -48,10 +48,10 @@ const useShapes = (mode: Modes) => {
     });
   };
 
-  const clearShapes = (): void => {
+  const clearShapes = useCallback((): void => {
     setDrawnShapes([]);
-    deleteLocalStorageShapeData();
-  };
+    // deleteLocalStorageShapeData();
+  }, []);
 
   const modifyShape: ModifyMethods = {
     invoke: () => {
