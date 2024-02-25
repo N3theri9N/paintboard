@@ -356,6 +356,16 @@ if (width > 20 && height > 20) {
 }
 ```
 
+## 초기화
+
+상태값을 빈 배열로 바뀌도록 구현하였습니다. 해당 기능은 `useshapes` 에 들어있습니다.
+
+```
+const clearShapes = useCallback((): void => {
+  setDrawnShapes([]);
+}, []);
+```
+
 ### 미리보기
 
 해당 이벤트는 `onMouseDown` 과 `onMouseUp` 사이에 실행되는 `onMouseMove`이벤트로 트리거 했습니다.
