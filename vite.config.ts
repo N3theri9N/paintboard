@@ -7,6 +7,9 @@ export default defineConfig({
   test: {
     include: ["test/vitest/**.test.tsx"],
     exclude: ["node_modules"],
+    coverage: {
+      reporter: ["json-summary"],
+    },
     globals: true,
     environment: "jsdom",
     alias: {
