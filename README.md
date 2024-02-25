@@ -11,9 +11,9 @@
 - **스타일**
   - TailwindCSS : 레이아웃 구성에 사용.
   - Styled-Component : 도형 컴포넌트에 변수를 주려면 CSS in JS 를 사용해야하여 그 중 스타일 컴포넌트 채택
-- **테스트코드** : github action 과 연동.
+- **테스트코드** : 
   - vitest : 커스텀 훅 유닛테스트에 활용.
-  - playwright : 기능 테스트 구현에 UI 가 보이지 않아 코드를 만들기가 어려운 점이 있어 E2E 테스트로 활용.
+  - playwright : E2E 테스트로 활용. github action 과 연동.
 - **그외 라이브러리** :
   - clsx : 조건별 클래스네임 구현에 사용.
   - html2canvas : 이미지 다운로드 기능 구현에 사용.
@@ -95,12 +95,12 @@ npx playwright install --with-deps
 (...)
 ```
 
-- next.config.mjs : NextJS 설정 파일.
-- tailwind.config.ts : Tailwind 스타일 설정 파일.
-- playwright.config.ts : tailwind 테스트 설정 파일.
-- vite.config.ts : vite 번들러 설정 파일.
+- `next.config.mjs` : NextJS 설정 파일.
+- `tailwind.config.ts` : Tailwind 스타일 설정 파일.
+- `playwright.config.ts` : tailwind 테스트 설정 파일.
+- `vite.config.ts` : vite 번들러 설정 파일.
 - test : 테스트코드 설정 파일 폴더
-  - `playwright/**.spen.ts` : playwright 테스트 코드
+  - `playwright/**.spec.ts` : playwright 테스트 코드
   - `vitest/**.test.tsx` : vitest 테스트 코드
 
 ## src
@@ -245,7 +245,7 @@ const useShapes = (mode: Modes) => {
 
 ### 로컬 저장소로 저장
 
-useShapes 훅 내부의 useEffect 를 활용하여 그려진 도형 데이터가 변경이 일어났다면, 저장 기능이 상시적으로 동작합니다.
+`useShapes` 훅 내부의 `useEffect` 를 활용하여 그려진 도형 데이터 상태값이 변경되면, 로컬 저장장소로 저장 행동이 상시적으로 동작합니다.
 
 ```
 import { setLocalStorageShapeData } from "@/util/LocalStorageDTO";
@@ -260,7 +260,7 @@ useEffect(
 
 ### 로컬 저장소에서 불러오기
 
-`<Canvas>` 의 하이드레이션이 완료되어 로컬 저장소에 접근 가능한 상태가 되었을때 실행하도록 ref 속성에 `initShape` 메소드를 걸었습니다.
+`<Canvas>` 의 하이드레이션이 완료되어 로컬 저장소에 접근 가능한 상태가 되었을때 실행하도록 `ref` 속성에 `initShape` 메소드를 걸었습니다.
 
 ```
 const initShapes = useCallback((node: HTMLDivElement) => {
@@ -283,7 +283,7 @@ const initShapes = useCallback((node: HTMLDivElement) => {
 
 ### 로컬 저장소 삭제 ( 삭제됨 )
 
-기존에 DTO 에서는 초기화할때 같이 실행하는 `deleteLocalStorageShapeData` 가 있었지만 초기화하면 빈 배열이 drawnShapes 에 저장되며 이 데이터가 로컬에 저장됩니다. 그러므로 꼭 필요한 내용이 아니라 제외하였습니다.
+기존에 DTO 에서는 초기화할때 같이 실행하는 `deleteLocalStorageShapeData` 가 있었지만 초기화하면 빈 배열이 `drawnShapes` 에 저장되며 이 데이터가 로컬에 저장됩니다. 그러므로 꼭 필요한 내용이 아니라 제외하였습니다.
 
 ```
 const deleteLocalStorageShapeData = () => {
@@ -300,9 +300,9 @@ const clearShapes = useCallback((): void => {
 
 ## 도형 컴포넌트
 
-레이아웃은 직관성을 위해 tailwind 를 적용했지만 `tailwind` 는 빌드시 프로젝트에 존재하는 클래스 값들을 `globals.css` 에 반영하는 구조로 진행되므로 구체적인 변수가 필요한 도형 컴포넌트를 tailwind 로 구현은 불가능에 가까웠습니다.
+레이아웃은 직관성을 위해 tailwind 를 적용했지만 `tailwind` 는 빌드시 프로젝트에 존재하는 클래스 값들을 `globals.css` 에 반영하는 구조로 진행되므로 구체적인 변수가 필요한 도형 컴포넌트를 `tailwind` 로 구현은 불가능에 가까웠습니다.
 
-그러므로 도형 컴포넌트는 CSS in JS 인로 구현 가능한 Styled-Component 로 제작하였습니다.
+그러므로 도형 컴포넌트는 CSS in JS 로 구현 가능한 Styled-Component 로 제작하였습니다.
 
 ```
 const ShapeComponent = styled.div<{
@@ -333,7 +333,7 @@ const ShapeComponent = styled.div<{
 
 해당 컴포넌트에 `mousedown` 과 `mouseup` 으로 이벤트로 시작지점, 끝지점의 위치을 계산하여 도형을 그릴 수 있었습니다.
 
-그 과정에서 계산과정이 자주 일어나, util 로 함수를 따로 빼면서 이를 클래스로 제작하였습니다.
+그 과정에서 계산과정이 자주 일어나, util 로 함수를 따로 빼면서 클래스로 제작하였습니다.
 `shapeDataCalculator.tsx`
 
 ```
@@ -370,11 +370,11 @@ const clearShapes = useCallback((): void => {
 
 해당 이벤트는 `onMouseDown` 과 `onMouseUp` 사이에 실행되는 `onMouseMove`이벤트로 트리거 했습니다.
 
-이 이벤트는 원래 해당 요소에 마우스를 올렸을때 실행되지만, 마우스를 클릭한 중이면 `event.buttons` 가 `1` 인 점을 활용하였습니다.
+이 이벤트는 본래 해당 요소에 마우스를 올렸을때 트리거 되지만, 마우스를 클릭한 중이면 `event.buttons` 가 `1` 인 점을 활용하였습니다.
 
-가장 중요한 건 이 컴포넌트는 절대로 drawnShapes 상태값과 엮여선 안됩니다. 원래 `onMouseMove` 이벤트는 꽤 자주 트리거되는에 리랜더링을 너무 많이 발생시킬 수도 있기 때문입니다.
+가장 중요한 건 이 컴포넌트는 `drawnShapes` 상태값을 설정하는데 사용해선 안됩니다. 원래 `onMouseMove` 이벤트는 꽤 자주 트리거하므로 리랜더링을 너무 많이 발생시킬 수도 있기 때문입니다.
 
-그래서 미리보기 기능은 `useRef` 를 활용한 비제어 컴포넌트로 제작하여, 별개의 동작으로 구현하였습니다.
+그래서 미리보기 컴포넌트는 `useRef` 를 활용한 비제어 컴포넌트로 제작하였고 `onMouseMove` 가 트리거되면 해당 컴포넌트의 속성값을 바꾸는 식으로 구현할 수 있었습니다.
 
 ```
 const setPreview = ({ left, top, width, height }: ShapeAttributes) => {
@@ -405,7 +405,7 @@ const setPreview = ({ left, top, width, height }: ShapeAttributes) => {
 
 ### 참고사항
 
-`mode` 가 `draw` 로 변경하면 선택한 도형 번호인 `index` 상태값은 `-1` 로 초기화됩니다. 이는 useEffect 를 통해 구현하였습니다.
+`mode` 가 `draw` 로 변경하면 선택한 도형의 번호인 `index` 상태값은 `-1` 로 초기화됩니다. 이는 useEffect 를 통해 구현하였습니다.
 
 ```
 useEffect(
@@ -497,9 +497,10 @@ useEffect(
 
 도형의 앞 뒤는 `drawnShapes` 배열의 배치 순서를 바꿔서 기능 반영이 가능했습니다.
 
-관련된 모든 메소드에선 `invoke` 를 발생하여 해당 index 의 도형이 제외된 배열인 `remainShapes`와 대상 도형 `targetShape` 로 추출한 다음 재배치하여 `setDrawnShapes` 를 트리거합니다.
-invoke
+관련된 모든 메소드에선 먼저 `invoke` 를 발생하여 해당 `index` 에 대응하는 도형을 제외한 배열인 `remainShapes`와 대응한 도형 `targetShape` 로 추출합니다.
+그 후 리턴된 데이터 들을 재배치하여 `drawnShapes` 를 변경합니다.
 
+**invoke**
 ```
 invoke: () => {
   const targetShape = drawnShapes[index];
@@ -509,25 +510,25 @@ invoke: () => {
 },
 ```
 
-맨 앞으로
+**맨 앞으로**
 
 ```
 newState = [...remainShapes, targetShape];
 ```
 
-앞으로
+**앞으로**
 
 ```
 newState = [...remainShapes.slice(0, toIndex), targetShape, ...remainShapes.slice(toIndex)]
 ```
 
-뒤로
+**뒤로**
 
 ```
 const newState = [...remainShapes.slice(0, toIndex), targetShape, ...remainShapes.slice(toIndex)];
 ```
 
-맨 뒤로
+**맨 뒤로**
 
 ```
 const newState = [targetShape, ...remainShapes];
@@ -537,13 +538,14 @@ const newState = [targetShape, ...remainShapes];
 
 > 도형들을 겹쳤을때 어떤 도형이 위인지 아래인지를 파악하기가 어려워 해당 기능을 추가하였습니다.
 
-ShapeType 에 color 값을 추가하였고 값이 없는 경우는 투명한 배경, 있을 경우는 해당 색으로 적용하도록 대응하였습니다.
+**ShapeType** 에 color 키를 추가하였고 값이 없는 경우는 투명한 배경, 있을 경우는 해당 색으로 적용하도록 대응하였습니다.
 
-다만 input 에서 `onChange` 이벤트에 대응하려니, 원래 HTML 과 다르게 동작하는 문제가 생겼습니다. 원래 input 선택창이 종료될 때 `onChange` 가 실행되어야하는데 React 에서는 팔레트에 드래그만 해도 onChange 가 동작하여 리랜더링을 많이 일으킬 수도 있었습니다.
+다만 `<input>` 에서 `onChange` 이벤트에 적용해보니, 원래 HTML 과 다르게 동작하는 문제가 생겼습니다. 
+color input 설정 영역을 닫을 때 `onChange` 가 실행되어야하지만, React 에서는 팔레트에 드래그만 해도 `onChange` 가 동작하여 리랜더링을 많이 일으킬 수도 있었습니다.
 
 [관련 레퍼런스](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color)
 
-그러므로 색을 선택한 다음 색 적용 버튼을 별도로 클릭해야 색칠이 되도록 구현하였습니다.
+그러므로 색을 선택한 다음 색 적용 버튼을 별도로 클릭해야 칠이 되도록 구현하였습니다.
 
 ```
 <input
@@ -564,8 +566,8 @@ ShapeType 에 color 값을 추가하였고 값이 없는 경우는 투명한 배
 
 ### 지우기
 
-지우기는 기존 array 의 프로토타입인 `splice()` 로 대응하여 구현했습니다.
-선택된 도형이 지워졌으므로, 이 행동을 한 다음에는 index 는 초기화합니다.
+지우기는 array 의 프로토타입인 `splice()` 로 대응하여 구현했습니다.
+선택된 도형이 지워졌으므로, 이 행동을 한 다음에는 `index` 는 초기화합니다.
 
 ```
 delete: () => {
@@ -601,8 +603,8 @@ export const Download = memo(() => {
 
 # 테스트코드
 
-커스텀 훅의 기능 테스트는 vitest로 대응하였으며
-전반적인 그림판 기능이 올바르게 작동하는지, 크로스브라우징도 커버할 수 있는 E2E 테스트는 playwright 로 대응하였습니다.
+커스텀 훅의 기능 테스트는 `vitest`로 대응하였지만 E2E 테스트를 시도해보니 유저 행동의 디버깅이 어려웠습니다.
+그래서 전반적인 그림판 기능이 올바르게 작동하는지, 크로스브라우징도 커버할 수 있도록 E2E 테스트는 `playwright` 로 대응하였습니다.
 
 적용한 테스트는 아래와 같습니다.
 vitest ( 경로는 test/vitest ) :
@@ -626,7 +628,7 @@ playwright ( chrome, firefox, webkit 환경에 대응합니다. 경로는 test/p
   playwright의 테스트는 pull Request 를 생성하면 github Action에서 테스트를 진행합니다.
 
 특이사항이 있다면 도형 이동을 테스트 코드로 구현해도 진행이 잘 되지 않았으며,
-webkit 에서는 새로고침 테스트가 잘 되지 않았습니다.
+webkit 브라우저 환경 에서는 새로고침 기능이 동작하지 않는 문제가 있었습니다.
 
 # REMAIN ISSUES
 
