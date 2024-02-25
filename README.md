@@ -547,10 +547,8 @@ export const Download = memo(() => {
 커스텀 훅의 기능 테스트는 vitest로 대응하였으며
 전반적인 그림판 기능이 올바르게 작동하는지, 크로스브라우징도 커버할 수 있는 E2E 테스트는 playwright 로 대응하였습니다.
 
-위 테스트코드는 github Action 과 연동하여 pull Request 를 생성하면 테스트를 진행합니다.
-
 적용한 테스트는 아래와 같습니다.
-vitest :
+vitest ( 경로는 test/vitest ) :
 
 - 사각형 그리기
 - 커스텀 훅 테스트
@@ -560,7 +558,7 @@ vitest :
   - 도형 편집
   - 색칠하기
 
-playwright ( chrome, firefox, webkit 환경에 대응합니다.)
+playwright ( chrome, firefox, webkit 환경에 대응합니다. 경로는 test/playwright)
 
 - 그리기
 - 지우기
@@ -568,6 +566,39 @@ playwright ( chrome, firefox, webkit 환경에 대응합니다.)
 - 로컬 저장소 동기화
 - 색칠하기
 - 도형 앞뒤로 이동
+  playwright의 테스트는 pull Request 를 생성하면 github Action에서 테스트를 진행합니다.
 
 특이사항이 있다면 도형 이동을 테스트 코드로 구현해도 진행이 잘 되지 않았으며,
-webkit 에서는 새로고침 테스트가 잘 되지 않는 특이사항이 있었습니다.
+webkit 에서는 새로고침 테스트가 잘 되지 않았습니다.
+
+# REMAIN ISSUES
+
+## 1. vitest 테스트코드 Github Action 적용
+
+Github Action 워크스페이스로 테스트코드와 연동을 시도해보았으나, 모듈을 찾을 수 없단 이유로 실패. 관련 레퍼런스도 찾을 수가 없어, 이 작업은 진행할 수가 없었습니다.
+
+[작업 링크](https://github.com/N3theri9N/paintboard/pull/19)
+
+## 2. 불필요한 리랜더링 해결
+
+대부분의 상단 `<ToolBox>` 의 행동이 `<DrawnShapes>` 의 리랜더링을 일으키고
+이미 그려진 도형을 클릭했을때 `<ToolBox>` 애 리랜더링을 발생시킵니다.
+
+사실 모든 컴포넌트가 상태값을 공유하는거나 마찬가지이므로 한계는 존재합니다.
+물론 메모이제이션을 이용하여, 일부 컴포넌트는 memo 로 감싸서, 관련 없는 값의 변화에 리랜더링을 막을 수는 있었습니다.
+
+단 값을 저장하는 무분별한 메모이제이션은 성능저하를 일으킬 수도 있어 프로퍼티에 들어갈 경우의 수가 매우 많은 `<DrawnShapes>` 컴포넌트는 메모로 감쌀 수는 없었습니다. 그러므로 해당 컴포넌트가 리랜더링을 항상 해두게 두어야하는 건 아쉽다고 생각이 듭니다.
+[memoization 관련 레퍼런스](https://d2.naver.com/helloworld/9223303)
+
+만약 새로 제작할 경우, index, mode, shape 이 셋을 하나의 객체로 상태로 관리하도록 한 다음 얕은 복사, 깊은 복사를 병행하여 리랜더링을 컨트롤 해볼 수 있을거로 생각됩니다.
+
+```
+type Actions = {
+  mode : Modes,
+  shape ?: Shape,
+  index : number,
+}
+const [action, setAction] = useState<Actions>({
+  mode: "draw", shape: "square", index: -1
+})
+```

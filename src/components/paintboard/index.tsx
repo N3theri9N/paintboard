@@ -23,7 +23,7 @@ const PaintBoard = ({ initShape = "square" }: { initShape?: Shapes }): JSX.Eleme
     modifyShape,
   } = useShapes(mode);
 
-  console.count("RERENDERING COUNT");
+  // console.count("RERENDERING COUNT");
 
   const ToolClickHandler = useCallback(
     (mode: Modes, shape?: Shapes) => () => {
@@ -35,9 +35,9 @@ const PaintBoard = ({ initShape = "square" }: { initShape?: Shapes }): JSX.Eleme
     []
   );
 
-  const resetIndex = () => {
+  const resetIndex = useCallback(() => {
     setIndex(-1);
-  };
+  }, []);
 
   return (
     <div>
