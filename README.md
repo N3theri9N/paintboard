@@ -300,10 +300,9 @@ const clearShapes = useCallback((): void => {
 
 ## 도형 컴포넌트
 
-도형 컴포넌트는 스타일드 컴포넌트로 적용하였습니다.
-레이아웃은 직관성을 위해 tailwind 를 적용했습니다. 다만 `tailwind` 는 빌드시 프로젝트에 존재하는 클래스 값들을 `globals.css` 에 반영하는 구조로 진행되므로 구체적인 변수가 필요한 도형 컴포넌트에 넣는건 불가능에 가까웠습니다.
+레이아웃은 직관성을 위해 tailwind 를 적용했지만 `tailwind` 는 빌드시 프로젝트에 존재하는 클래스 값들을 `globals.css` 에 반영하는 구조로 진행되므로 구체적인 변수가 필요한 도형 컴포넌트를 tailwind 로 구현은 불가능에 가까웠습니다.
 
-그러므로 CSS in JS 로 대응할 필요가 있었으며, Styled-component 로 컴포넌트를 제작하였습니다.
+그러므로 도형 컴포넌트는 CSS in JS 인로 구현 가능한 Styled-Component 로 제작하였습니다.
 
 ```
 const ShapeComponent = styled.div<{
@@ -332,7 +331,7 @@ const ShapeComponent = styled.div<{
 
 상태값 중 `mode === "draw"` 일때 캔버스의 마우스는 그리기 기능으로 동작하며 이때 나오는 `<DrawEventComponent>` 컴포넌트에서 이벤트를 트리거합니다.
 
-해당 컴포넌트에 mousedown, mouseup 의 이벤트로 시작지점, 끝지점의 위치을 계산하여 도형을 그릴 수 있었습니다.
+해당 컴포넌트에 `mousedown` 과 `mouseup` 으로 이벤트로 시작지점, 끝지점의 위치을 계산하여 도형을 그릴 수 있었습니다.
 
 그 과정에서 계산과정이 자주 일어나, util 로 함수를 따로 빼면서 이를 클래스로 제작하였습니다.
 `shapeDataCalculator.tsx`
@@ -355,6 +354,16 @@ const { left, top, width, height } = shapeDataCalculator.calcShapeData(e.clientX
 if (width > 20 && height > 20) {
   addShapes({ left, top, width, height, shape });
 }
+```
+
+## 초기화
+
+상태값을 빈 배열로 바뀌도록 구현하였습니다. 해당 기능은 `useshapes` 에 들어있습니다.
+
+```
+const clearShapes = useCallback((): void => {
+  setDrawnShapes([]);
+}, []);
 ```
 
 ### 미리보기
@@ -394,21 +403,34 @@ const setPreview = ({ left, top, width, height }: ShapeAttributes) => {
   }}
 ```
 
+### 참고사항
+
+`mode` 가 `draw` 로 변경하면 선택한 도형 번호인 `index` 상태값은 `-1` 로 초기화됩니다. 이는 useEffect 를 통해 구현하였습니다.
+
+```
+useEffect(
+  function resetIndexByMode() {
+    if (mode === "draw") resetIndex();
+  },
+  [mode, resetIndex]
+);
+```
+
 ---
 
 ## 편집
 
 상태값 중 `mode === "modify"` 일때 캔버스의 마우스는 편집 기능으로 동작합니다.
+아무것도 선택되지 않은 상태 즉 `index === -1` 일 경우에는 편집과 관련된 버튼은 회색 칠 하면서 비활성화됩니다.
 
 ### 도형 선택
 
 이미 그려진 도형을 클릭한 경우 `setIndex`가 동작합니다.
-
 빨간 외곽전으로 그려진 컴포넌트 `<ModifyEventComponent>` 가 화면에 표시되어 어떤 도형이 선택되었는지 표시됩니다.
 
 ### 선택 제외
 
-어떤 도형이 선택된 상태일 경우, 아무 도형이 안그려진 곳을 클릭하면 선택이 해제됩니다. 즉 `<Canvas>` 컴포넌트를 클릭했을 때 입니다.
+어떤 도형이 선택된 상태일 경우, 아무 도형이 안그려진 곳을 클릭하면 선택이 해제됩니다. 즉 `<Canvas>` 컴포넌트를 클릭했을 때 초기화됩니다.
 
 ```
 <Canvas initShapes={initShapes} onClickHandler={() => {setIndex(-1)}>
@@ -416,7 +438,7 @@ const setPreview = ({ left, top, width, height }: ShapeAttributes) => {
 </Canvas>
 ```
 
-그런데 이벤트 버블링으로 인해 하위 컴포넌트인 `<DrawnShapes>` 컴포넌트도 클릭 이벤트가 발생하는 문제가 일어났습니다. 이를 해결하기 위해 `stopPropagation()` 을 적용하였습니다.
+그런데 이벤트 버블링으로 인해 그려진 컴포넌트 `<DrawnShapes>` 를 클릭했을때 위의 `onClick` 도 같이 실행하는 문제가 일어나서 선택기능이 없어지는 문제가 생겨 `stopPropagation()` 을 적용하였습니다.
 
 ```
 <ShapeComponent
@@ -431,8 +453,41 @@ const setPreview = ({ left, top, width, height }: ShapeAttributes) => {
 
 도형 선택 후에 `<ModifyEventComponent>` 컴포넌트에서 이벤트를 트리거합니다. 이 또한 그리기와 동일하게, 비제어 컴포넌트로 구현하였습니다.
 
-이미 그려진 도형을 대응해야하므로, 드래그&드롭 시점의 좌표값을 다르게 활용해야하고 해당 컴포넌트는 항상 보여야한단 점은 정도의 다른 점이 있습니다.
-( \* ModifyEventComponent.tsx 코드 전체 참고 )
+선택한 도형은 붉은색으로 표시되고 최상단 레이어에 그려집니다. 전체적인 구조는 미리보기 컴포넌트와 동일하게 `onMouseMove` 이벤트 중에 비제어 컴포넌트가 이동하며 해당 컴포넌트 마우스를 떼면 `drawnShapes` 에 반영됩니다.
+
+특이한 점은 마우스를 뗀 후 실행할 함수는 `onMouseUp` 이 아닌 `onClick` 에서 트리거됩니다. 사실 클릭을 뗄 때 `onMouseUp` 과 `onClick` 은 모두 트리거되지만 <u>`onClick` 은 마우스 커서가 컴포넌트에서 벗어나지 않아야 한다</u>는 차이점이 있습니다.
+
+그래서 드래그 중에 마우스가 컴포넌트나 브라우저 창에서 벗어날 때 변경사항이 저장하지 않도록 제약을 걸 수 있었습니다.
+
+```
+<ShapeComponent
+  onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    ShapeDataCalculator.setOffset(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+  }}
+  onMouseMove={(e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (e.buttons === 1) {
+      const { left, top } = ShapeDataCalculator.calcShapeData(e.clientX, e.clientY);
+      setMovingShape({ left, top, width, height });
+    }
+  }}
+  onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    const { left, top } = ShapeDataCalculator.calcShapeData(e.clientX, e.clientY);
+    const newState = { ...selectedShape, left, top };
+    moveShape(index, newState);
+  }}
+  ref={movingShapeRef}
+  id="SelectedShape"
+  $top={top}
+  $left={left}
+  $width={width}
+  $height={height}
+  $shape={shape}
+/>
+```
 
 ### ModifyShape
 
@@ -484,7 +539,9 @@ const newState = [targetShape, ...remainShapes];
 
 ShapeType 에 color 값을 추가하였고 값이 없는 경우는 투명한 배경, 있을 경우는 해당 색으로 적용하도록 대응하였습니다.
 
-다만 input 에서 onChange 이벤트에 대응하려니, 원래 HTML 과 다르게 동작하는 문제가 생겼습니다. 원래 input 선택창이 종료될 때 onChange 가 실행되어야하는데 React 에서는 팔레트에 드래그만 해도 onChange 가 동작하여 리랜더링을 많이 일으킬 수도 있었습니다.
+다만 input 에서 `onChange` 이벤트에 대응하려니, 원래 HTML 과 다르게 동작하는 문제가 생겼습니다. 원래 input 선택창이 종료될 때 `onChange` 가 실행되어야하는데 React 에서는 팔레트에 드래그만 해도 onChange 가 동작하여 리랜더링을 많이 일으킬 수도 있었습니다.
+
+[관련 레퍼런스](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color)
 
 그러므로 색을 선택한 다음 색 적용 버튼을 별도로 클릭해야 색칠이 되도록 구현하였습니다.
 
@@ -507,8 +564,8 @@ ShapeType 에 color 값을 추가하였고 값이 없는 경우는 투명한 배
 
 ### 지우기
 
-지우기는 기존 array 의 index 에 해당 데이터를 splice 로 대응하여 완료했습니다.
-선택된 도형이 지워졌으므로, 이 행동을 한 다음에는 index 는 초기화되어야합니다.
+지우기는 기존 array 의 프로토타입인 `splice()` 로 대응하여 구현했습니다.
+선택된 도형이 지워졌으므로, 이 행동을 한 다음에는 index 는 초기화합니다.
 
 ```
 delete: () => {
@@ -547,10 +604,8 @@ export const Download = memo(() => {
 커스텀 훅의 기능 테스트는 vitest로 대응하였으며
 전반적인 그림판 기능이 올바르게 작동하는지, 크로스브라우징도 커버할 수 있는 E2E 테스트는 playwright 로 대응하였습니다.
 
-위 테스트코드는 github Action 과 연동하여 pull Request 를 생성하면 테스트를 진행합니다.
-
 적용한 테스트는 아래와 같습니다.
-vitest :
+vitest ( 경로는 test/vitest ) :
 
 - 사각형 그리기
 - 커스텀 훅 테스트
@@ -560,7 +615,7 @@ vitest :
   - 도형 편집
   - 색칠하기
 
-playwright ( chrome, firefox, webkit 환경에 대응합니다.)
+playwright ( chrome, firefox, webkit 환경에 대응합니다. 경로는 test/playwright)
 
 - 그리기
 - 지우기
@@ -568,6 +623,39 @@ playwright ( chrome, firefox, webkit 환경에 대응합니다.)
 - 로컬 저장소 동기화
 - 색칠하기
 - 도형 앞뒤로 이동
+  playwright의 테스트는 pull Request 를 생성하면 github Action에서 테스트를 진행합니다.
 
 특이사항이 있다면 도형 이동을 테스트 코드로 구현해도 진행이 잘 되지 않았으며,
-webkit 에서는 새로고침 테스트가 잘 되지 않는 특이사항이 있었습니다.
+webkit 에서는 새로고침 테스트가 잘 되지 않았습니다.
+
+# REMAIN ISSUES
+
+## 1. vitest 테스트코드 Github Action 적용
+
+Github Action 워크스페이스로 테스트코드와 연동을 시도해보았으나, 모듈을 찾을 수 없단 이유로 실패. 관련 레퍼런스도 찾을 수가 없어, 이 작업은 진행할 수가 없었습니다.
+
+[작업 링크](https://github.com/N3theri9N/paintboard/pull/19)
+
+## 2. 불필요한 리랜더링 해결
+
+대부분의 상단 `<ToolBox>` 의 행동이 `<DrawnShapes>` 의 리랜더링을 일으키고
+이미 그려진 도형을 클릭했을때 `<ToolBox>` 애 리랜더링을 발생시킵니다.
+
+사실 모든 컴포넌트가 상태값을 공유하는거나 마찬가지이므로 한계는 존재합니다.
+물론 메모이제이션을 이용하여, 일부 컴포넌트는 memo 로 감싸서, 관련 없는 값의 변화에 리랜더링을 막을 수는 있었습니다.
+
+단 값을 저장하는 무분별한 메모이제이션은 성능저하를 일으킬 수도 있어 프로퍼티에 들어갈 경우의 수가 매우 많은 `<DrawnShapes>` 컴포넌트는 메모로 감쌀 수는 없었습니다. 그러므로 해당 컴포넌트가 리랜더링을 항상 해두게 두어야하는 건 아쉽다고 생각이 듭니다.
+[memoization 관련 레퍼런스](https://d2.naver.com/helloworld/9223303)
+
+만약 새로 제작할 경우, index, mode, shape 이 셋을 하나의 객체로 상태로 관리하도록 한 다음 얕은 복사, 깊은 복사를 병행하여 리랜더링을 컨트롤 해볼 수 있을거로 생각됩니다.
+
+```
+type Actions = {
+  mode : Modes,
+  shape ?: Shape,
+  index : number,
+}
+const [action, setAction] = useState<Actions>({
+  mode: "draw", shape: "square", index: -1
+})
+```
