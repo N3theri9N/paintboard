@@ -74,5 +74,6 @@ export const DrawingShape = forwardRef<HTMLDivElement, { shape: Shapes }>(
     );
   }
 );
+DrawingShape.displayName = "DrawingShape";
 
 export default DrawnShapes;
