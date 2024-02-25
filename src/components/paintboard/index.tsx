@@ -5,9 +5,9 @@ import useShapes from "@/hooks/useShapes";
 import DrawnShapes from "./DrawnShapes";
 import * as ToolBar from "./ToolBar";
 import { Modes } from "@/types/mode";
-import DrawEventComponent from "./Canvas/DrawEventComponent";
-import ModifyEventComponent from "./Canvas/ModifyEventComponent";
-import Canvas from "./Canvas";
+import DrawEventComponent from "./CanvasComp/DrawEventComponent";
+import ModifyEventComponent from "./CanvasComp/ModifyEventComponent";
+import Canvas from "./CanvasComp";
 
 const PaintBoard = ({ initShape = "square" }: { initShape?: Shapes }): JSX.Element => {
   const [shape, setShape] = useState<Shapes>(initShape);
