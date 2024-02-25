@@ -1,5 +1,5 @@
 import { render, fireEvent } from "@testing-library/react";
-import PaintBoard from "../components/paintboard";
+import PaintBoard from "@/components/paintboard";
 
 describe("초기화", () => {
   test("초기화 버튼 클릭", () => {

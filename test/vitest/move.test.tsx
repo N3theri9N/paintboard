@@ -1,5 +1,5 @@
 import { render, fireEvent } from "@testing-library/react";
-import PaintBoard from "../components/paintboard";
+import PaintBoard from "@/components/paintboard";
 
 describe("이동", () => {
   test("이동 테스트", () => {
@@ -24,7 +24,7 @@ describe("이동", () => {
 
     const previewShape = document.querySelector("#SelectedShape") as HTMLDivElement;
     const previewShapeStyle = window.getComputedStyle(previewShape);
-    console.log(previewShapeStyle.left);
+
     const shapeStyle1 = window.getComputedStyle(shape1);
     expect(shapeStyle1.left).equals(previewShapeStyle.left);
     expect(shapeStyle1.top).equals(previewShapeStyle.top);
@@ -34,7 +34,5 @@ describe("이동", () => {
     fireEvent.mouseDown(previewShape);
     fireEvent.mouseMove(previewShape, { clientX: 600, clientY: 1000 });
     fireEvent.mouseUp(previewShape);
-
-    console.log(previewShapeStyle.left);
   });
 });

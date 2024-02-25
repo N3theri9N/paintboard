@@ -1,7 +1,7 @@
 import { Modes, ModifyMethods } from "@/types/mode";
 import { ShapeType } from "@/types/shape";
 import {
-  deleteLocalStorageShapeData,
+  // deleteLocalStorageShapeData,
   getLocalStorageShapeData,
   setLocalStorageShapeData,
 } from "@/util/LocalStorageDTO";
@@ -18,18 +18,18 @@ const useShapes = (mode: Modes) => {
     setDrawnShapes(getLocalStorageShapeData());
   }, []);
 
-  const resetIndex = () => {
+  const resetIndex = useCallback(() => {
     if (index !== -1) {
       setIndex(-1);
     }
-  };
+  }, [index]);
 
   // 그리기 모드일때 index 초기화
   useEffect(
     function resetIndexByMode() {
       if (mode === "draw") resetIndex();
     },
-    [mode]
+    [mode, resetIndex]
   );
 
   useEffect(
@@ -48,10 +48,10 @@ const useShapes = (mode: Modes) => {
     });
   };
 
-  const clearShapes = (): void => {
+  const clearShapes = useCallback((): void => {
     setDrawnShapes([]);
-    deleteLocalStorageShapeData();
-  };
+    // deleteLocalStorageShapeData();
+  }, []);
 
   const modifyShape: ModifyMethods = {
     invoke: () => {

@@ -1,13 +1,13 @@
 "use client";
 import { Shapes } from "@/types/shape";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import useShapes from "@/hooks/useShapes";
 import DrawnShapes from "./DrawnShapes";
 import * as ToolBar from "./ToolBar";
 import { Modes } from "@/types/mode";
-import DrawEventComponent from "./DrawEventComponent";
-import ModifyEventComponent from "./ModifyEventComponent";
-import Canvas from "./canvas";
+import DrawEventComponent from "./CanvasComp/DrawEventComponent";
+import ModifyEventComponent from "./CanvasComp/ModifyEventComponent";
+import Canvas from "./CanvasComp";
 
 const PaintBoard = ({ initShape = "square" }: { initShape?: Shapes }): JSX.Element => {
   const [shape, setShape] = useState<Shapes>(initShape);
@@ -25,12 +25,15 @@ const PaintBoard = ({ initShape = "square" }: { initShape?: Shapes }): JSX.Eleme
 
   console.count("RERENDERING COUNT");
 
-  const ToolClickHandler = (mode: Modes, shape?: Shapes) => () => {
-    setMode(mode);
-    if (shape !== undefined) {
-      setShape(shape);
-    }
-  };
+  const ToolClickHandler = useCallback(
+    (mode: Modes, shape?: Shapes) => () => {
+      setMode(mode);
+      if (shape !== undefined) {
+        setShape(shape);
+      }
+    },
+    []
+  );
 
   const resetIndex = () => {
     setIndex(-1);

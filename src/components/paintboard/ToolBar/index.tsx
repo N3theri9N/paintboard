@@ -2,42 +2,49 @@ import ToolButton from "@/components/UI/ToolButton";
 import { Modes, ModifyMethods } from "@/types/mode";
 import { Shapes } from "@/types/shape";
 import html2canvas from "html2canvas";
-import React, { ChangeEvent, ReactNode, useRef } from "react";
+import React, { ChangeEvent, memo, ReactNode, useRef } from "react";
 
-export const Draw = ({
-  mode,
-  shape,
-  ToolClickHandler,
-}: {
-  mode: Modes;
-  shape: Shapes;
-  ToolClickHandler: (mode: Modes, shape?: Shapes) => () => void;
-}) => {
-  return (
-    <WhiteBackground>
-      <ToolButton
-        active={mode === "draw" && shape === "square"}
-        onClick={ToolClickHandler("draw", "square")}
-      >
-        <div data-testid="draw-square" className="border-2 mx-2 h-full border-black" />
-      </ToolButton>
-      <ToolButton
-        active={mode === "draw" && shape === "circle"}
-        onClick={ToolClickHandler("draw", "circle")}
-      >
-        <div data-testid="draw-circle" className="border-2 mx-2 h-full rounded-full border-black" />
-      </ToolButton>
-    </WhiteBackground>
-  );
-};
+export const Draw = memo(
+  ({
+    mode,
+    shape,
+    ToolClickHandler,
+  }: {
+    mode: Modes;
+    shape: Shapes;
+    ToolClickHandler: (mode: Modes, shape?: Shapes) => () => void;
+  }) => {
+    return (
+      <WhiteBackground>
+        <ToolButton
+          active={mode === "draw" && shape === "square"}
+          onClick={ToolClickHandler("draw", "square")}
+        >
+          <div data-testid="draw-square" className="border-2 mx-2 h-full border-black" />
+        </ToolButton>
+        <ToolButton
+          active={mode === "draw" && shape === "circle"}
+          onClick={ToolClickHandler("draw", "circle")}
+        >
+          <div
+            data-testid="draw-circle"
+            className="border-2 mx-2 h-full rounded-full border-black"
+          />
+        </ToolButton>
+      </WhiteBackground>
+    );
+  }
+);
+Draw.displayName = "Draw";
 
-export const Clear = ({ clearShapes }: { clearShapes: () => void }) => {
+export const Clear = memo(({ clearShapes }: { clearShapes: () => void }) => {
   return (
     <WhiteBackground>
       <ToolButton onClick={clearShapes}>초기화</ToolButton>
     </WhiteBackground>
   );
-};
+});
+Clear.displayName = "Clear";
 
 export const Modify = ({
   mode,
@@ -91,7 +98,7 @@ export const Modify = ({
   );
 };
 
-export const Download = () => {
+export const Download = memo(() => {
   const downloadButtonHandler = () => {
     let canvasDivElement = document.getElementById("canvas") as HTMLDivElement;
     html2canvas(canvasDivElement).then((canvas: HTMLCanvasElement) => {
@@ -106,7 +113,8 @@ export const Download = () => {
       <ToolButton onClick={downloadButtonHandler}>다운로드</ToolButton>
     </WhiteBackground>
   );
-};
+});
+Download.displayName = "Download";
 
 const WhiteBackground = ({ children }: { children: ReactNode }) => {
   return <div className="flex items-center bg-white">{children}</div>;

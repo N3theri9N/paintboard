@@ -1,6 +1,6 @@
 import { render, fireEvent } from "@testing-library/react";
 import { act } from "react-dom/test-utils";
-import PaintBoard from "../components/paintboard";
+import PaintBoard from "@/components/paintboard";
 
 describe("그리기", () => {
   test("사각형", () => {
